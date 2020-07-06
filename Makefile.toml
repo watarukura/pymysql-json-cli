@@ -1,0 +1,64 @@
+[tasks.install]
+description = "Build"
+script = ['''
+#!/usr/bin/env bash
+poetry install
+''']
+
+[tasks.lint]
+description = "Lint"
+script = ['''
+#!/usr/bin/env bash
+poetry run black ./
+''']
+
+[tasks.type_check]
+description = "Type Check"
+script = ['''
+#!/usr/bin/env bash
+poetry run mypy --config mypy.ini
+''']
+
+[tasks.import_check]
+description = "Import Check"
+script = ['''
+#!/usr/bin/env bash
+poetry run isort . -rc
+''']
+
+[tasks.pytest]
+description = "Test"
+script = ['''
+#!/usr/bin/env bash
+sleep 10
+poetry run pytest --verbose -s --cov=src ./tests
+''']
+
+
+[tasks.tests]
+dependencies = [
+    "lint",
+    "type_check",
+    "import_check",
+    "pytest",
+]
+
+[tasks.superlint]
+description = "Lint Others"
+script = ['''
+#!/usr/bin/env bash
+docker run superlinter
+''']
+
+[tasks.build_superlint]
+description = "Build for Lint Others"
+script = ['''
+#!/usr/bin/env bash
+docker build -t superlinter --no-cache .
+''']
+
+[tasks.lints]
+dependencies = [
+    "build_superlint",
+    "superlint"
+]

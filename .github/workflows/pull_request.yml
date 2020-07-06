@@ -1,0 +1,128 @@
+name: Lint and Test
+
+on:
+  pull_request:
+
+jobs:
+  lint_python:
+    name: Lint Python Code Base
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+
+      - name: Install dependencies
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+          source $HOME/.poetry/env
+          poetry install --no-root
+
+      - name: Lint with black
+        run: |
+          source $HOME/.poetry/env
+          poetry run black --check ./
+
+      - name: Type Check with mypy
+        run: |
+          source $HOME/.poetry/env
+          poetry run mypy --config mypy.ini
+
+      - name: Notify Result to Slack
+        uses: homoluctus/slatify@master
+        if: always()
+        with:
+          type: ${{ job.status }}
+          job_name: ':python: *Lint check*'
+          channel: '#ci_my_projects'
+          url: ${{ secrets.SLACK_WEBHOOK }}
+
+  lint_except_python:
+    name: Lint Except Python Code Base
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Lint Code Base
+        uses: github/super-linter@v2.0.0
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_YAML: true
+          VALIDATE_JSON: true
+          VALIDATE_XML: false
+          VALIDATE_MD: true
+          VALIDATE_BASH: true
+          VALIDATE_PERL: false
+          VALIDATE_PYTHON: false
+          VALIDATE_RUBY: false
+          VALIDATE_COFFEE: false
+          VALIDATE_ANSIBLE: false
+          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_JAVASCRIPT_STANDARD: false
+          VALIDATE_TYPESCRIPT_ES: false
+          VALIDATE_TYPESCRIPT_STANDARD: false
+          VALIDATE_DOCKER: false
+          VALIDATE_GO: false
+          VALIDATE_TERRAFORM: false
+          ANSIBLE_DIRECTORY: /ansible
+          ACTIONS_RUNNER_DEBUG: false
+
+      - name: Notify Result to Slack
+        uses: homoluctus/slatify@master
+        if: always()
+        with:
+          type: ${{ job.status }}
+          job_name: ':python: *Lint check*'
+          channel: '#ci_my_projects'
+          url: ${{ secrets.SLACK_WEBHOOK }}
+
+  test:
+    name: Python Test
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+
+      - name: Install dependencies
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+          source $HOME/.poetry/env
+          poetry install --no-root
+
+      - name: Start DynamoDB in GitHub Actions
+        uses: rrainn/dynamodb-action@v2.0.0
+        with:
+          port: 18000
+          cors: '*'
+
+      - name: Test with pytest
+        env:
+          AWS_ACCESS_KEY_ID: DUMMY
+          AWS_SECRET_ACCESS_KEY: DUMMY
+          AWS_REGION: ap-northeast-1
+          AWS_ENDPOINT_URL: http://localhost:18000
+        run: |
+          source $HOME/.poetry/env
+          poetry run pytest --verbose -s --cov=src ./tests
+
+      - name: Notify Result to Slack
+        uses: homoluctus/slatify@master
+        if: always()
+        with:
+          type: ${{ job.status }}
+          job_name: ':pytest: *Test*'
+          channel: '#ci_my_projects'
+          url: ${{ secrets.SLACK_WEBHOOK }}
