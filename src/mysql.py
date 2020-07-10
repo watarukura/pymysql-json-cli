@@ -10,7 +10,7 @@ def get_connection() -> pymysql.connections.Connection:
         user=os.environ["USER"],
         password=os.environ["PASSWORD"],
         db=os.environ["DB"],
-        port=os.environ["PORT"],
+        port=int(os.environ["PORT"]),
         charset="utf8mb4",
         cursorclass=pymysql.cursors.DictCursor,
     )

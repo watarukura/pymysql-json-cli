@@ -34,15 +34,6 @@ sleep 10
 poetry run pytest --verbose -s --cov=src ./tests
 ''']
 
-
-[tasks.tests]
-dependencies = [
-    "lint",
-    "type_check",
-    "import_check",
-    "pytest",
-]
-
 [tasks.superlint]
 description = "Lint Others"
 script = ['''
@@ -61,4 +52,28 @@ docker build -t superlinter --no-cache .
 dependencies = [
     "build_superlint",
     "superlint"
+]
+
+[tasks.docker_up]
+description = "Docker for Test"
+script = ['''
+#!/usr/bin/env bash
+docker-compose up --detach
+''']
+
+[tasks.docker_down]
+description = "DynamoDB-local"
+script = ['''
+#!/usr/bin/env bash
+docker-compose down
+''']
+
+[tasks.tests]
+dependencies = [
+    "lint",
+    "type_check",
+    "import_check",
+    "docker_up",
+    "pytest",
+    "docker_down"
 ]
