@@ -11,8 +11,17 @@ runner = CliRunner()
     "sql, expect",
     (
         (
-            "SHOW DATABASES;\n",
+            "SHOW DATABASES;",
             '[{"Database": "information_schema"}, {"Database": "test"}]\n',
+        ),
+        (
+            "CREATE TABLE aaa(aaa varchar(8) primary key);",
+            '"affected_rows: 0"\n',
+        ),
+        ("SHOW TABLES;", '[{"Tables_in_test": "aaa"}]\n'),
+        (
+            "SHOW COLUMNS FROM aaa;",
+            '[{"Field": "aaa", "Type": "varchar(8)", "Null": "NO", "Key": "PRI", "Default": null, "Extra": ""}]\n',
         ),
     ),
 )
