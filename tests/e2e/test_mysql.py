@@ -16,7 +16,7 @@ runner = CliRunner()
         ),
         (
             "CREATE TABLE test_table(test_column varchar(20) primary key);",
-            '"affected_rows: 0"\n',
+            '{"affected_rows": 0}\n',
         ),
         ("SHOW TABLES;", '[{"Tables_in_test": "test_table"}]\n'),
         (
@@ -26,7 +26,7 @@ runner = CliRunner()
         ),
         (
             'INSERT INTO test_table(test_column) VALUES("test_value");',
-            '"affected_rows: 1"\n',
+            '{"affected_rows": 1}\n',
         ),
         ("SELECT * FROM test_table;", '[{"test_column": "test_value"}]\n',),
     ),
