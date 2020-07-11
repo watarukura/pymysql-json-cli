@@ -32,7 +32,7 @@ def query(sql: str, args={}) -> Optional[Union[Tuple[Any, ...]]]:
         conn.close()
 
 
-def command(sql: str, args={}) -> str:
+def command(sql: str, args={}) -> dict:
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
@@ -41,6 +41,6 @@ def command(sql: str, args={}) -> str:
             else:
                 affected_rows = cursor.execute(sql)
             conn.commit()
-            return f"affected_rows: {affected_rows}"
+            return {"affected_rows": affected_rows}
     finally:
         conn.close()
