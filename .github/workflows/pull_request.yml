@@ -91,11 +91,6 @@ jobs:
     services:
       mysql:
         image: mysql:5.7
-        env:
-          MYSQL_DATABASE: test
-          MYSQL_USER: user
-          MYSQL_PASSWORD: pass
-          MYSQL_ROOT_PASSWORD: rootpassword
 
     steps:
       - uses: actions/checkout@v2
@@ -114,14 +109,14 @@ jobs:
 
       - name: MySQL Service Start
         run: |
-          sudo /etc/init.d/mysql start
+          sudo systemctl start mysql.service
 
       - name: Test with pytest
         env:
           HOST: localhost
           DB: test
-          USER: user
-          PASSWORD: pass
+          USER: root
+          PASSWORD: root
         run: |
           source $HOME/.poetry/env
           poetry run pytest --verbose -s --cov=src ./tests
