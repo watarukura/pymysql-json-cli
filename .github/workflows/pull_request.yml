@@ -112,6 +112,10 @@ jobs:
           source $HOME/.poetry/env
           poetry install --no-root
 
+      - name: MySQL Service Start
+        run: |
+          sudo /etc/init.d/mysql start
+
       - name: Test with pytest
         env:
           HOST: localhost
@@ -119,7 +123,6 @@ jobs:
           USER: user
           PASSWORD: pass
         run: |
-          sudo /etc/init.d/mysql start
           source $HOME/.poetry/env
           poetry run pytest --verbose -s --cov=src ./tests
 
