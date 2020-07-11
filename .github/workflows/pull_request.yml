@@ -85,55 +85,55 @@ jobs:
           url: ${{ secrets.SLACK_WEBHOOK }}
 
   test:
-    name: Python Test
-    runs-on: ubuntu-18.04
+    container-job:
+      name: Python Test
+      runs-on: ubuntu-18.04
 
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_DATABASE: test
-          MYSQL_ROOT_PASSWORD: password
-        ports:
-          - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      services:
+        mysql:
+          image: mysql:5.7
+          env:
+            MYSQL_DATABASE: test
+            MYSQL_ROOT_PASSWORD: password
+          ports:
+            - 3306
+          options: >-
+            --health-cmd="mysqladmin ping"
+            --health-interval=10s
+            --health-timeout=5s
+            --health-retries=3
 
-    steps:
-      - uses: actions/checkout@v2
+      steps:
+        - uses: actions/checkout@v2
 
-      # - name: Verify MySQL connection from host
-      #   run: |
-      #     sudo apt-get install -y mysql-client
-      #     mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -ppassword -e "SHOW DATABASES"
+        - name: Set up Python 3.8
+          uses: actions/setup-python@v2
+          with:
+            python-version: '3.8'
+            architecture: 'x64'
 
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-          architecture: 'x64'
+        - name: Install dependencies
+          run: |
+            curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+            source $HOME/.poetry/env
+            poetry install --no-root
 
-      - name: Install dependencies
-        run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-          source $HOME/.poetry/env
-          poetry install --no-root
+        - name: Test with pytest
+          env:
+            HOST: '127.0.0.1'
+            DB: test
+            USER: root
+            PASSWORD: password
+            PORT: 3306
+          run: |
+            source $HOME/.poetry/env
+            poetry run pytest --verbose -s --cov=src ./tests
 
-      - name: Test with pytest
-        env:
-          HOST: '127.0.0.1'
-          DB: test
-          USER: root
-          PASSWORD: password
-          PORT: 3306
-        run: |
-          source $HOME/.poetry/env
-          poetry run pytest --verbose -s --cov=src ./tests
-
-      - name: Notify Result to Slack
-        uses: homoluctus/slatify@master
-        if: always()
-        with:
-          type: ${{ job.status }}
-          job_name: ':pytest: *Test*'
-          channel: '#ci_my_projects'
-          url: ${{ secrets.SLACK_WEBHOOK }}
+        - name: Notify Result to Slack
+          uses: homoluctus/slatify@master
+          if: always()
+          with:
+            type: ${{ job.status }}
+            job_name: ':pytest: *Test*'
+            channel: '#ci_my_projects'
+            url: ${{ secrets.SLACK_WEBHOOK }}
