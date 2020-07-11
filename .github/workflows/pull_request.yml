@@ -99,6 +99,12 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
+      - name: Verify MySQL connection from host
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -ppassword -e "SHOW DATABASES"
+
+    steps:
       - uses: actions/checkout@v2
 
       - name: Set up Python 3.8
@@ -112,10 +118,6 @@ jobs:
           curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
           source $HOME/.poetry/env
           poetry install --no-root
-
-      - name: MySQL Service Start
-        run: |
-          sudo systemctl start mysql.service
 
       - name: Test with pytest
         env:
