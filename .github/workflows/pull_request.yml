@@ -89,12 +89,13 @@ jobs:
     runs-on: ubuntu-18.04
 
     services:
-      mysql: image:5.7
-      env:
-        MYSQL_DATABASE: test
-        MYSQL_USER: user
-        MYSQL_PASSWORD: pass
-        MYSQL_ROOT_PASSWORD: rootpassword
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: test
+          MYSQL_USER: user
+          MYSQL_PASSWORD: pass
+          MYSQL_ROOT_PASSWORD: rootpassword
 
     steps:
       - uses: actions/checkout@v2
