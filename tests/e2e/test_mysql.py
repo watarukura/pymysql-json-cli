@@ -21,7 +21,8 @@ runner = CliRunner()
         ("SHOW TABLES;", '[{"Tables_in_test": "test_table"}]\n'),
         (
             "SHOW COLUMNS FROM test_table;",
-            '[{"Field": "test_column", "Type": "varchar(20)", "Null": "NO", "Key": "PRI", "Default": null, "Extra": ""}]\n',
+            '[{"Field": "test_column", "Type": "varchar(20)", \
+"Null": "NO", "Key": "PRI", "Default": null, "Extra": ""}]\n',
         ),
         (
             'INSERT INTO test_table(test_column) VALUES("test_value");',
