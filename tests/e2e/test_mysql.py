@@ -30,3 +30,23 @@ runner = CliRunner()
 def test_cli(sql: str, expect: str):
     result = runner.invoke(cli, args=[], input=sql)
     assert result.output == expect
+
+
+@pytest.mark.parametrize(
+    "sql, args, expect",
+    (
+        (
+            "INSERT INTO test_table(test_column) VALUES(%(value)s);",
+            '{"value": "arg_value"}',
+            '{"affected_rows": 1}\n',
+        ),
+        (
+            "SELECT * FROM test_table;",
+            None,
+            '[{"test_column": "arg_value"}, {"test_column": "test_value"}]\n',
+        ),
+    ),
+)
+def test_cli_args(sql: str, args: str, expect: str):
+    result = runner.invoke(cli, args=["--args", args], input=sql)
+    assert result.output == expect
