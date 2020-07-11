@@ -11,10 +11,6 @@ runner = CliRunner()
     "sql, expect",
     (
         (
-            "SHOW DATABASES;",
-            '[{"Database": "information_schema"}, {"Database": "test"}]\n',
-        ),
-        (
             "CREATE TABLE test_table(test_column varchar(20) primary key);",
             '{"affected_rows": 0}\n',
         ),
