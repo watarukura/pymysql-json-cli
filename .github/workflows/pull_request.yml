@@ -92,11 +92,13 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
+          MYSQL_DATABASE: test
           MYSQL_USER: root
           MYSQL_PASSWORD: root
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=
 
     steps:
       - uses: actions/checkout@v2
@@ -119,7 +121,7 @@ jobs:
 
       - name: Test with pytest
         env:
-          HOST: mysql
+          HOST: 127.0.0.1
           DB: test
           USER: root
           PASSWORD: root
