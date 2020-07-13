@@ -33,7 +33,7 @@ classifiers = [
 ]
 
 [tool.poetry.scripts]
-pyxl = "src.main:cli"
+pymysql-json = "src.main:cli"
 
 [tool.poetry.dependencies]
 python = "^3.8"

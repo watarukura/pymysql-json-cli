@@ -19,6 +19,15 @@ def get_connection() -> pymysql.connections.Connection:
 
 
 def query(sql: str, args={}) -> Optional[Union[Tuple[Any, ...]]]:
+    """SELECT / SHOW SQL execute
+
+    Args:
+        sql (str): SQL
+        args (dict, optional): argument. Defaults to {}.
+
+    Returns:
+        Optional[Union[Tuple[Any, ...]]]: query result
+    """
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
@@ -33,6 +42,15 @@ def query(sql: str, args={}) -> Optional[Union[Tuple[Any, ...]]]:
 
 
 def command(sql: str, args={}) -> dict:
+    """INSERT / UPDATE / ... SQL execute
+
+    Args:
+        sql (str): SQL
+        args (dict, optional): argumnt. Defaults to {}.
+
+    Returns:
+        dict: affected rows count
+    """
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
