@@ -22,3 +22,21 @@ FROM %(table_name)s
 EOF
 pymysql-json --args '{"table_name": "performance_schema"}'
 ```
+
+## development
+
+- Need
+  - cargo-make
+  - docker
+
+### lint & test
+
+```sh
+makers --env-file .env.test tests
+```
+
+### lint except python code
+
+```sh
+makers --env-file .env.test lints
+```
