@@ -24,7 +24,9 @@ def cli(args=None, dryrun=False):
             r"%\((?P<arg>.+)\)s", r"{\g<arg>}", sql.replace("\n", "")
         ).format(**args_dict)
         result = {"dryrun": sql_text}
-    elif sql.upper().startswith("SELECT") or sql.upper().startswith("SHOW"):
+    elif sql.strip().upper().startswith(
+        "SELECT"
+    ) or sql.strip().upper().startswith("SHOW"):
         result = query(sql, args_dict)
     else:
         result = command(sql, args_dict)
