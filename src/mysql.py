@@ -18,7 +18,7 @@ def get_connection() -> pymysql.connections.Connection:
     return connection
 
 
-def query(sql: str, args={}, dryrun=False) -> Optional[Union[Tuple[Any, ...]]]:
+def query(sql: str, args={}) -> Optional[Union[Tuple[Any, ...]]]:
     """SELECT / SHOW SQL execute
 
     Args:
@@ -31,10 +31,7 @@ def query(sql: str, args={}, dryrun=False) -> Optional[Union[Tuple[Any, ...]]]:
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            if args:
-                cursor.execute(sql, args)
-            else:
-                cursor.execute(sql)
+            cursor.execute(sql, args)
             result = cursor.fetchall()
             return result
     finally:
@@ -54,10 +51,7 @@ def command(sql: str, args={}) -> dict:
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            if args:
-                affected_rows = cursor.execute(sql, args)
-            else:
-                affected_rows = cursor.execute(sql)
+            affected_rows = cursor.execute(sql, args)
             conn.commit()
             return {"affected_rows": affected_rows}
     finally:
