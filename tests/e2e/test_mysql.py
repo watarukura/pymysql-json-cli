@@ -58,7 +58,7 @@ def test_cli_args(sql: str, args: str, expect: str):
         (
             "INSERT INTO test_table(test_column) VALUES(%(value)s);",
             '{"value": "arg_value"}',
-            '"INSERT INTO test_table(test_column) VALUES(arg_value);"\n',
+            '{"dryrun": "INSERT INTO test_table(test_column) VALUES(arg_value);"}\n',
         ),
     ),
 )

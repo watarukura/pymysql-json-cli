@@ -18,7 +18,7 @@ def get_connection() -> pymysql.connections.Connection:
     return connection
 
 
-def query(sql: str, args={}) -> Optional[Union[Tuple[Any, ...]]]:
+def query(sql: str, args={}, dryrun=False) -> Optional[Union[Tuple[Any, ...]]]:
     """SELECT / SHOW SQL execute
 
     Args:

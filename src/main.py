@@ -20,9 +20,10 @@ def cli(args=None, dryrun=False):
         args_dict = {}
 
     if dryrun:
-        result = re.sub(
+        sql_text = re.sub(
             r"%\((?P<arg>.+)\)s", r"{\g<arg>}", sql.replace("\n", "")
         ).format(**args_dict)
+        result = {"dryrun": sql_text}
     elif sql.upper().startswith("SELECT") or sql.upper().startswith("SHOW"):
         result = query(sql, args_dict)
     else:
