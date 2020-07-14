@@ -50,3 +50,18 @@ def test_cli(sql: str, expect: str):
 def test_cli_args(sql: str, args: str, expect: str):
     result = runner.invoke(cli, args=["--args", args], input=sql)
     assert result.output == expect
+
+
+@pytest.mark.parametrize(
+    "sql, args, expect",
+    (
+        (
+            "INSERT INTO test_table(test_column) VALUES(%(value)s);",
+            '{"value": "arg_value"}',
+            '{"dryrun": "INSERT INTO test_table(test_column) VALUES(arg_value);"}\n',
+        ),
+    ),
+)
+def test_cli_dryrun(sql: str, args: str, expect: str):
+    result = runner.invoke(cli, args=["--args", args, "--dryrun"], input=sql)
+    assert result.output == expect
