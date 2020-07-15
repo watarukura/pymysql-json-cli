@@ -19,8 +19,7 @@ runner = CliRunner()
         ("SHOW TABLES;", '[{"Tables_in_test": "test_table"}]\n'),
         (
             "SHOW COLUMNS FROM test_table;",
-            '[{"Field": "test_column", "Type": "varchar(20)", \
-"Null": "NO", "Key": "PRI", "Default": null, "Extra": ""}]\n',
+            '[{"Field": "test_column", "Type": "varchar(20)", "Null": "NO", "Key": "PRI", "Default": null, "Extra": ""}]\n',  # noqa
         ),
         (
             'INSERT INTO test_table(test_column) VALUES("test_value");',
@@ -60,7 +59,7 @@ def test_cli_args(sql: str, args: str, expect: str):
         (
             "INSERT INTO test_table(test_column) VALUES(%(value)s);",
             '{"value": "arg_value"}',
-            '{"dryrun": "INSERT INTO test_table(test_column) VALUES(arg_value);"}\n',
+            '{"dryrun": "INSERT INTO test_table(test_column) VALUES(arg_value);"}\n',  # noqa
         ),
     ),
 )
@@ -84,9 +83,6 @@ def test_cli_sqlfile(sql: str, args: str, expect: str):
     sql_file = tempfile.NamedTemporaryFile()
     with open(sql_file.name, "w") as f:
         f.write(sql)
-    # with open(sql_file.name, "r") as f:
-    #     content = f.read()
-    # assert "" == content
     result = runner.invoke(
         cli, args=["--sqlfile", sql_file.name, "--args", args]
     )
