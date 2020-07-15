@@ -7,12 +7,19 @@ from src.mysql import command, query
 
 
 @click.command()
-@click.option("--args", type=str, help="json args")
+@click.option(
+    "--sqlfile", type=click.Path(exists=True, readable=True), help="sql file"
+)
+@click.option("--args", type=str, help="JSON for sql template")
 @click.option("--dryrun", is_flag=True, help="dryrun mode")
-def cli(args=None, dryrun=False):
-    stdin_text = click.get_text_stream("stdin")
-    sql = stdin_text.read()
-    stdin_text.close()
+def cli(sqlfile: str, args=None, dryrun=False):
+    if sqlfile:
+        with open(sqlfile, "r") as f:
+            sql = f.read()
+    else:
+        stdin_text = click.get_text_stream("stdin")
+        sql = stdin_text.read()
+        stdin_text.close()
 
     if args:
         args_dict = json.loads(args)

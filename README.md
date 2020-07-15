@@ -10,9 +10,10 @@ pip install pymysql-json-cli
 
 ```sh
 cat << EOF |
-SHOW TABLES;
+SHOW DATABASES;
 EOF
 pymysql-json
+# [{"Database": "information_schema"}, {"Database": "test"}]
 ```
 
 ```sh
@@ -20,7 +21,14 @@ cat <<EOF |
 SELECT *
 FROM %(table_name)s
 EOF
-pymysql-json --args '{"table_name": "performance_schema"}'
+pymysql-json --args '{"table_name": "test_table"}'
+# [{"test_column": "arg_value"}, {"test_column": "test_value"}]
+```
+
+```sh
+echo "SHOW DATABASES;" > db.sql
+pymysql-json --sqlfile ./db.sql
+# [{"Database": "information_schema"}, {"Database": "test"}]
 ```
 
 ## development
