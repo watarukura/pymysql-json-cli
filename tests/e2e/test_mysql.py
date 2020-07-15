@@ -73,8 +73,7 @@ def test_cli_dryrun(sql: str, args: str, expect: str):
     (
         (
             "INSERT INTO test_table(test_column) VALUES(%(value)s);",
-            # "SELECT * FROM test_table;",
-            '{"value": "test_value1"}',
+            '{"value": "file_value"}',
             '{"affected_rows": 1}\n',
         ),
     ),
