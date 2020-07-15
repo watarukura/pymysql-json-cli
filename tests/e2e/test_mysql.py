@@ -1,3 +1,5 @@
+import tempfile
+
 import pytest
 from click.testing import CliRunner
 
@@ -64,4 +66,28 @@ def test_cli_args(sql: str, args: str, expect: str):
 )
 def test_cli_dryrun(sql: str, args: str, expect: str):
     result = runner.invoke(cli, args=["--args", args, "--dryrun"], input=sql)
+    assert result.output == expect
+
+
+@pytest.mark.parametrize(
+    "sql, args, expect",
+    (
+        (
+            "INSERT INTO test_table(test_column) VALUES(%(value)s);",
+            # "SELECT * FROM test_table;",
+            '{"value": "test_value1"}',
+            '{"affected_rows": 1}\n',
+        ),
+    ),
+)
+def test_cli_sqlfile(sql: str, args: str, expect: str):
+    sql_file = tempfile.NamedTemporaryFile()
+    with open(sql_file.name, "w") as f:
+        f.write(sql)
+    # with open(sql_file.name, "r") as f:
+    #     content = f.read()
+    # assert "" == content
+    result = runner.invoke(
+        cli, args=["--sqlfile", sql_file.name, "--args", args]
+    )
     assert result.output == expect
